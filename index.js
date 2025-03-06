@@ -8,8 +8,8 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
- console.log(process.env.DB_USER);
- console.log(process.env.DB_PASS);
+console.log(process.env.DB_USER);
+console.log(process.env.DB_PASS);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.noaml.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -31,7 +31,7 @@ async function run() {
 
     const user_sports = client.db('sportsDB').collection('sports');
 
-    app.get('/sports', async(req, res) => {
+    app.get('/sports', async (req, res) => {
       const cursor = user_sports.find();
       const result = await cursor.toArray();
       res.send(result);
@@ -39,7 +39,7 @@ async function run() {
 
     app.get('/sports/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await user_sports.findOne(query);
       res.send(result);
     })
@@ -50,9 +50,32 @@ async function run() {
       res.send(result);
     })
 
-    app.delete('/sports/:id', async (req ,res) => {
+    app.put('/sports/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updated_sports = req.body;
+      console.log(updated_sports, filter);
+      const sports = {
+        $set: {
+          item_name: updated_sports.item_name,
+           category_name: updated_sports.category_name,
+           image: updated_sports.image,
+           description: updated_sports.description,
+           price: updated_sports.price,
+           rating: updated_sports.rating,
+           delivery: updated_sports.delivery,
+           customization: updated_sports.customization,
+           status : updated_sports.status
+        }
+      }
+      const result = await user_sports.updateOne(filter, sports, options);
+      res.send(result)
+    })
+
+    app.delete('/sports/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
       const result = await user_sports.deleteOne(query);
       res.send(result);
     })
@@ -61,7 +84,7 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-//     await client.close();
+    //     await client.close();
   }
 }
 run().catch(console.dir);
@@ -70,9 +93,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-      res.send('Cricket Sports Server is Running');
+  res.send('Cricket Sports Server is Running');
 })
 
 app.listen(port, () => {
-      console.log(`Cricket Sports Server is Running Now: ${port}`);
+  console.log(`Cricket Sports Server is Running Now: ${port}`);
 })
