@@ -30,7 +30,10 @@ async function run() {
     await client.connect();
 
     const user_sports = client.db('sportsDB').collection('sports');
+    const user_login = client.db('sportsDB').collection('users');
 
+
+    // users sports crud
     app.get('/sports', async (req, res) => {
       const cursor = user_sports.find();
       const result = await cursor.toArray();
@@ -79,6 +82,22 @@ async function run() {
       const result = await user_sports.deleteOne(query);
       res.send(result);
     })
+
+    // users management crud
+
+    app.post('/users', async (req, res) => {
+      const new_user = req.body;
+      const result = await user_login.insertOne(new_user);
+      res.send(result);
+    })
+
+    app.get('/users', async (req, res) => {
+      const cursor = user_login.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
