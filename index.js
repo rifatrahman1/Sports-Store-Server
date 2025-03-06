@@ -37,13 +37,20 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/sports/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await user_sports.findOne(query);
+      res.send(result);
+    })
+
     app.post('/sports', async (req, res) => {
       const new_sports = req.body;
       const result = await user_sports.insertOne(new_sports);
       res.send(result);
     })
 
-    app.delete('sports/:id', async (req ,res) => {
+    app.delete('/sports/:id', async (req ,res) => {
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
       const result = await user_sports.deleteOne(query);
