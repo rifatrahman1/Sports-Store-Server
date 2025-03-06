@@ -32,7 +32,6 @@ async function run() {
     const user_sports = client.db('sportsDB').collection('sports');
     const user_login = client.db('sportsDB').collection('users');
 
-
     // users sports crud
     app.get('/sports', async (req, res) => {
       const cursor = user_sports.find();
@@ -94,8 +93,22 @@ async function run() {
     app.get('/users', async (req, res) => {
       const cursor = user_login.find();
       const result = await cursor.toArray();
+      console.log(result);
       res.send(result);
     })
+
+    app.patch('/users', async (req, res) => {
+      const email = req.body.email;
+      const filter = { email };
+      const update_doc = {
+        $set: {
+          last_signin_time: req.body?.last_signin_time
+        }
+      };
+    
+      const result = await user_login.updateOne(filter, update_doc);
+      res.send(result);
+    });    
 
 
     // Send a ping to confirm a successful connection
