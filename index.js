@@ -11,7 +11,6 @@ app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.noaml.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-console.log(uri);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -62,7 +61,6 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updated_sports = req.body;
-      console.log(updated_sports, filter);
       const sports = {
         $set: {
           item_name: updated_sports.item_name,
